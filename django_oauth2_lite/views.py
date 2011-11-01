@@ -1,11 +1,15 @@
-"""Views for django-oauth2-lite application."""
+"""Views for django_oauth2_lite application."""
 
 from django.shortcuts import render_to_response, get_object_or_404 
 from django_oauth2_lite.models import Client, Code, Scope, scope_by_name, code_by_token, token_by_value
 from django_oauth2_lite.forms import CodeForm, AccessRequest
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse,\
+    HttpResponseRedirect
 from django.utils import simplejson
 from django_oauth2_lite.decorators import clientauth_required
+from django.views.generic.list_detail import object_list
+from django.contrib.auth.decorators import login_required
+from django.views.generic.create_update import create_object
 
 def _get(request,key,dflt=None):
     if request.GET.has_key(key):
@@ -20,7 +24,7 @@ def _post(request,key,dflt=None):
         return dflt
 
 @clientauth_required
-def authorize(request,template='templates/django-oauth2-lite/authorize.html'):
+def authorize(request,template='templates/django_oauth2_lite/authorize.html'):
     
     state = None
     if request.REQUEST.has_key('state'):
@@ -95,3 +99,24 @@ def token(request):
                           'token_type': at.type,
                           'expires_in': 3600,
                           'refresh_token': at.refresh_token.value})
+    
+@login_required
+def clients(request,template_name='templates/django_oauth2_lite/clients.html'):
+    queryset = Client.objects.filter(owner=request.user)
+    return object_list(request, 
+                       queryset=queryset, 
+                       template_name=template_name)
+
+@login_required
+def add_client(request,template_name="templates/django_oauth2_lite/client_form.html"):
+    return create_object(request, 
+                         model=Client, 
+                         template_name=template_name,
+                         post_save_redirect="/oauth/clients",
+                         extra_context={'user': request.user})
+
+@login_required
+def remove_client(request,pk):
+    client = get_object_or_404(Client,id=pk)
+    client.delete()
+    return HttpResponseRedirect("/oauth/clients")
