@@ -1,4 +1,10 @@
-TODO: Add app name
+django-oauth2-lite
 ==================
 
-TODO: Add project readme.
+This is a "server" implementation of OAuth 2.0 for the django web framework
+
+* Does not depend on any other python oauth module
+* Only works with django
+* Only works with oauth 2.0 (draft version 22) - no OAuth 1.x support at all
+* Only implements bearer tokens
+
