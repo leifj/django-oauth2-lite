@@ -9,6 +9,13 @@ def read(fname):
     except IOError:
         return ''
 
+template_patterns = [
+'templates/**/*',
+]
+
+package_data = dict(
+    (package_name, template_patterns) for package_name in find_packages()
+)
 
 setup(
     name="django-oauth2-lite",
@@ -21,5 +28,6 @@ setup(
     author_email='leifj@sunet.se',
     url="",
     include_package_data=True,
+    package_data=package_data,
     test_suite='django-oauth2-lite.tests.runtests.runtests',
 )
