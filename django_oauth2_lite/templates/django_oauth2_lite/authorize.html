@@ -1,0 +1,8 @@
+{% extends "django_oauth2_lite/base.html" %}
+{% block title %}Authorization{% endblock %}
+{% block body %}
+<form method="POST">{% csrf_token %}
+{{form.as_p}}
+<input type="submit" value="Accept"/>
+</form>
+{% endblock %}
