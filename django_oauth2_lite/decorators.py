@@ -51,6 +51,7 @@ def oauth_required(func,scope=None):
                 if scope and not token.has_scope(scope):
                     return HttpResponseForbidden()
                 
+                request.user = token.owner
                 return func(args,kwargs)
             
         return HttpResponseForbidden()
