@@ -1,13 +1,9 @@
 """Admin classes for django-oauth2-lite application."""
 
 from django.contrib import admin
+from django_oauth2_lite.models import Scope, Code, Client, Token
 
-from django-oauth2-lite.models import Example
-
-
-class ExampleAdmin(admin.ModelAdmin):
-    """Admin class for Example model class."""
-    pass
-
-
-admin.site.register(Example, ExampleAdmin)
+admin.site.register(Scope)
+admin.site.register(Code)
+admin.site.register(Client)
+admin.site.register(Token)
