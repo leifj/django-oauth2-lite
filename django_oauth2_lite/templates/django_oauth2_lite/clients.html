@@ -1,7 +1,7 @@
 {% extends "django_oauth2_lite/base.html" %}
 {% block title %}Clients{% endblock %}
 {% block body %}
-<h1>Registered Clients</h1>
+<h1>Registered OAuth2 Clients</h1>
 <ul>
 {% for client in client_list %}
 <li>{{client.client_id}} - {{client.client_secret}} <a href="client/{{client.id}}/remove">Remove</a></li>
