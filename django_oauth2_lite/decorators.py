@@ -7,8 +7,7 @@ import functools
 from django_oauth2_lite.models import client_by_id, token_by_value
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 
-def clientauth_required(func):
-    
+def clientauth_required(func):    
     @functools.wraps(func)
     def new_func(*args,**kwargs):
         request = args[0]
@@ -35,6 +34,7 @@ def clientauth_required(func):
             return HttpResponseForbidden()
         
         return func(args,kwargs)
+    return new_func
     
 def oauth_required(func,scope=None):
     @functools.wraps(func)
@@ -55,3 +55,4 @@ def oauth_required(func,scope=None):
                 return func(args,kwargs)
             
         return HttpResponseForbidden()
+    return new_func
