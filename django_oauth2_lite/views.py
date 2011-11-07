@@ -10,6 +10,7 @@ from django_oauth2_lite.decorators import clientauth_required
 from django.views.generic.list_detail import object_list
 from django.contrib.auth.decorators import login_required
 from django.views.generic.create_update import create_object
+import logging
 
 def _get(request,key,dflt=None):
     if request.GET.has_key(key):
@@ -133,3 +134,8 @@ def remove_client(request,id):
     return HttpResponseRedirect("../../clients")
 
 # Manage scopes in the admin view
+
+def callback(request,template_name="django_oauth2_lite/callback.html"):
+        return render_to_response(template_name,{'error': _get(request,'error'),
+                                                 'state': _get(request,'state'),
+                                                 'code': _get(request,'code')})

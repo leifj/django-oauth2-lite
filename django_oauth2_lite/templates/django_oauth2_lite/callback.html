@@ -1,0 +1,17 @@
+{% extends "django_oauth2_lite/base.html" %}
+{% block title %}Example Redirect URI{% endblock %}
+{% block body %}
+{% if error %}
+<h1>Error</h1>
+{{error}}
+{% if error_description %}
+<p>{{error_description}}</p>
+{% endif %}
+{% if error_uri %}
+<p>For more information <a href="{{error_uri}}">follow this link</a></p>
+{% endif %}
+{% else %}
+<h1>Authorization Granted</h1>
+{{code}}
+{% endif %}
+{% endblock %}
