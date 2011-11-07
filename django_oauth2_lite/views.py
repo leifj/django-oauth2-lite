@@ -1,7 +1,8 @@
 """Views for django_oauth2_lite application."""
 
 from django.shortcuts import render_to_response, get_object_or_404 
-from django_oauth2_lite.models import Client, scope_by_name, code_by_token, token_by_value
+from django_oauth2_lite.models import Client, scope_by_name, code_by_token, token_by_value,\
+    Scope
 from django_oauth2_lite.forms import CodeForm, ClientForm
 from django.http import HttpResponseBadRequest, HttpResponse,\
     HttpResponseRedirect
@@ -137,6 +138,14 @@ def remove_client(request,id):
 # Manage scopes in the admin view
 
 def callback(request,template_name="django_oauth2_lite/callback.html"):
-        return render_to_response(template_name,{'error': _get(request,'error'),
-                                                 'state': _get(request,'state'),
-                                                 'code': _get(request,'code')})
+    return render_to_response(template_name,{'error': _get(request,'error'),
+                                             'state': _get(request,'state'),
+                                             'code': _get(request,'code')})
+        
+@login_required
+def scopes(request,template_name='django_oauth2_lite/scopes.html'):
+    queryset = Scope.objects.all()
+    return object_list(request,
+                       template_object_name='scope',
+                       queryset=queryset,
+                       template_name=template_name)

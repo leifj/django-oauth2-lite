@@ -8,5 +8,6 @@ urlpatterns = patterns('django_oauth2_lite.views',
     url(r'^clients?/?$', view='clients'),
     url(r'^client/add/?$', view='add_client'),
     url(r'^client/(?P<id>[0-9]+)/remove/?$', view='remove_client'),
+    url(r'^scopes/?', view='scopes'),
     url(r'^example/cb', view='callback')
 )
