@@ -7,9 +7,14 @@ import functools
 from django_oauth2_lite.models import client_by_id, token_by_value
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 
-def clientauth_required(func):    
-    @functools.wraps(func)
-    def new_func(*args,**kwargs):
+try:
+    from functools import wraps
+except ImportError:
+    from django.utils.functional import wraps  # Python 2.4 fallback.
+
+def clientauth_required(func):
+    @wraps(func)
+    def wrapper(*args,**kwargs):
         request = args[0]
         client_id = None
         client_secret = None
@@ -34,25 +39,26 @@ def clientauth_required(func):
             return HttpResponseForbidden()
         
         return func(*args,**kwargs)
-    return new_func
+    return wrapper
     
-def oauth_required(func,scope=None):
-    @functools.wraps(func)
-    def new_func(*args,**kwargs):
-        request = args[0]
-        if request.META.has_key('HTTP_AUTHORIZATION'):
-            ah = request.META['HTTP_AUTHORIZATION']
-            parts = ah.split(' ')
-            if parts[0] == 'Bearer':
-                token = token_by_value(parts[1])
+def oauth2_required(scope=None):
+    def wrap(func):
+        def wrapper(*args,**kwargs):
+            request = args[0]
+            if request.META.has_key('HTTP_AUTHORIZATION'):
+                ah = request.META['HTTP_AUTHORIZATION']
+                parts = ah.split(' ')
+                if parts[0] == 'Bearer':
+                    token = token_by_value(parts[1])
+                    
+                    if not token or not token.is_valid():
+                        return HttpResponseForbidden()
+                    if scope and not token.has_scope(scope):
+                        return HttpResponseForbidden()
+                    
+                    request.user = token.owner
+                    return func(*args,**kwargs)
                 
-                if not token or not token.is_valid():
-                    return HttpResponseForbidden()
-                if scope and not token.has_scope(scope):
-                    return HttpResponseForbidden()
-                
-                request.user = token.owner
-                return func(*args,**kwargs)
-            
-        return HttpResponseForbidden()
-    return new_func
+            return HttpResponseForbidden()
+        return wrapper
+    return wrap
