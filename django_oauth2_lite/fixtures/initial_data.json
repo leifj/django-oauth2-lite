@@ -3,7 +3,9 @@
 		"model": "django_oauth2_lite.scope",
 		"pk": 1,
 		"fields": {
-			"name": "http://localhost/scope/test"
+			"name": "http://localhost/scope/test",
+			"description": "A scope only used for testing"
 		}
-	}
+	},
+	
 ]
