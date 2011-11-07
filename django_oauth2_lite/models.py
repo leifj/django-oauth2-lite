@@ -65,7 +65,7 @@ class Client(models.Model):
         if ttl != None:
             exp = datetime.datetime.now()+datetime.timedelta(0,ttl)
         if not scopes and refresh_token:
-            scopes = refresh_token.scopes
+            scopes = refresh_token.scopes.all()
         
         t = Token.objects.create(client=self,owner=owner,value=rcode(sz),expiration_time=exp,refresh_token=refresh_token)
         for scope in scopes:
@@ -111,8 +111,6 @@ class Token(models.Model):
     expiration_time = models.DateTimeField(null=True,blank=True)
     refresh_token = ForeignKey('self',null=True,blank=True)
     
-    type = 'bearer'
-    
     def __unicode__(self):
         return "token for %s from %s [%s]" % (self.owner.__unicode__(),self.client.__unicode__(),self.scope())
     
@@ -151,7 +149,7 @@ class Code(models.Model):
         return "%s grant for %s" % (self.authorized and 'authorized' or 'un-authorized',self.token.owner)
     
     def new_access_token(self):
-        return self.client.new_access_token(owner=self.token.owner,scopes=self.scopes)
+        return self.token.client.new_access_token(owner=self.token.owner,scopes=self.token.scopes.all())
     
     def is_valid(self):
         return not self.used and self.token.is_valid()

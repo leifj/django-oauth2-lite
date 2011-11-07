@@ -104,7 +104,7 @@ def token(request):
         return token_error('unsupported_grant_type')
     
     return json_response({'access_token': at.value,
-                          'token_type': at.type,
+                          'token_type': at.type(),
                           'expires_in': 3600,
                           'refresh_token': at.refresh_token.value})
     
