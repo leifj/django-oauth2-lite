@@ -25,7 +25,7 @@ def clientauth_required(func):
             else:
                 return HttpResponseForbidden()
         else:
-            return func(args,kwargs)
+            return func(*args,**kwargs)
         
         client = client_by_id(client_id)
         if client == None:
@@ -33,7 +33,7 @@ def clientauth_required(func):
         if client.client_secret != client_secret:
             return HttpResponseForbidden()
         
-        return func(args,kwargs)
+        return func(*args,**kwargs)
     return new_func
     
 def oauth_required(func,scope=None):
@@ -52,7 +52,7 @@ def oauth_required(func,scope=None):
                     return HttpResponseForbidden()
                 
                 request.user = token.owner
-                return func(args,kwargs)
+                return func(*args,**kwargs)
             
         return HttpResponseForbidden()
     return new_func
