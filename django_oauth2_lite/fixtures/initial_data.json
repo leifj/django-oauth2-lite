@@ -4,7 +4,7 @@
 		"pk": 1,
 		"fields": {
 			"name": "http://localhost/scope/test",
-			"description": "A scope only used for testing"
+			"description": "A scope only used for testing"	
 		}
 	},
 	
