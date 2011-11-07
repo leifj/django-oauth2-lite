@@ -36,11 +36,12 @@ def do_authorize(request,state,template_name):
         scope = scope_by_name(n)
         if scope == None:
             return client.redirect({'error': 'invalid_scope','state': state})
-        code.scopes.add(scope)
+        code.token.scopes.add(scope)
         
-    form = CodeForm(instance=code,state=state)
+    form = CodeForm(instance=code)
+    form.fields['code'].initial = code.token.value
 
-    return render_to_response(template_name,{"form": form})
+    return render_to_response(template_name,{"form": form, 'client': code.token.client, 'scopes': code.token.scopes})
 
 @clientauth_required
 def authorize(request,template_name='django_oauth2_lite/authorize.html'):
@@ -58,7 +59,7 @@ def authorize(request,template_name='django_oauth2_lite/authorize.html'):
             if form.cleaned_data['authorized']:
                 code.authorized = True
                 code.save()
-                return code.token.client.redirect({'state': state,'code': code.value})
+                return code.token.client.redirect({'state': state,'code': code.token.value})
             else:
                 code.token.delete()
                 code.delete()
