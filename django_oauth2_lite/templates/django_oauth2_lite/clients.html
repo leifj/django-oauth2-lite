@@ -4,7 +4,7 @@
 <h1>Registered OAuth2 Clients</h1>
 <ul>
 {% for client in client_list %}
-<li>{{client.client_id}} - {{client.client_secret}} <a href="client/{{client.id}}/remove">Remove</a></li>
+<li>{{client.client_id}} - {{client.client_secret}} <a href="client/{{client.id}}/remove">Remove</a>&nbsp;<a href="authorize?state=xxx&client_id={{client.client_id}}&client_secret={{client.client_secret}}&scope=http://localhost/scope/test">Test</a></li>
 {% endfor %}
 </ul>
 <a href="client/add">Add Client</a>
