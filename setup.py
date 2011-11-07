@@ -9,12 +9,14 @@ def read(fname):
     except IOError:
         return ''
 
-template_patterns = [
+data_patterns = [
 'templates/**/*',
+'fixtures/**/*',
+'fixtures/*'
 ]
 
 package_data = dict(
-    (package_name, template_patterns) for package_name in find_packages()
+    (package_name, data_patterns) for package_name in find_packages()
 )
 
 setup(
