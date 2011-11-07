@@ -1,8 +1,27 @@
 {% extends "django_oauth2_lite/base.html" %}
 {% block title %}Authorization{% endblock %}
 {% block body %}
-<form method="POST">{% csrf_token %}
-{{form.as_p}}
-<input type="submit" value="Accept"/>
-</form>
+<h1>Application Authorization Request</h1>
+<p>An application ({{client.name}}) wants access to your information on this service</p>
+<div>
+	<span style="vertical-align: top; float: left; display: inline; width: 50%;">
+		{% for scope in scopes.all %}
+		<h2>Permissions</h2>
+		<ul>
+		   <li title="{{scope.description}}">{{scope.name}}</li>
+		</ul>
+		{% endfor %}
+	</span>
+	<span style="vertical-align: top;">
+		<h2>{{client.name}}</h2>
+		<p>{{client.description}}</p>
+	</span>
+</div>
+<div style="clear: both;"></div>
+<div>
+	<form method="POST">{% csrf_token %}
+	{{form.as_p}}
+	<input type="submit" value="Accept"/>
+	</form>
+</div>
 {% endblock %}
