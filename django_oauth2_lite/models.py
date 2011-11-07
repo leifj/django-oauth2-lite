@@ -7,9 +7,10 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.contrib.auth.models import User
 from django.db.models.fields.files import ImageField
 import random, string, socket, os, datetime
-from urlparse import urlparse, parse_qs
+from urlparse import urlparse, parse_qs, urlunparse
 from django.http import HttpResponseRedirect
 from django.db.models.signals import pre_save
+from urllib import urlencode
  
 CONFIDENTIAL = 0
 PUBLIC = 1
@@ -23,7 +24,7 @@ class Scope(models.Model):
     def __unicode__(self):
         return self.name
  
-def scope_by_name(self,name):
+def scope_by_name(name):
     try:
         return Scope.objects.get(name=name)
     except Scope.DoesNotExist:
@@ -48,7 +49,7 @@ class Client(models.Model):
     client_id = CharField(editable=False,max_length=255)
     client_secret = CharField(editable=False,max_length=255)
     owner = ForeignKey(User,editable=False)
-    redirection_uri = URLField()
+    redirection_uri = URLField(verify_exists=False)
     logo = ImageField(upload_to="clients",blank=True,null=True)
     
     timecreated = models.DateTimeField(auto_now_add=True)
@@ -61,10 +62,10 @@ class Client(models.Model):
         exp = None
         if ttl != None:
             exp = datetime.datetime.now()+datetime.timedelta(0,ttl)
-        if not scopes:
+        if not scopes and refresh_token:
             scopes = refresh_token.scopes
         
-        t = Token.objects.create(client=self,value=rcode(sz),expiration_time=exp,refresh_token=refresh_token)
+        t = Token.objects.create(client=self,owner=owner,value=rcode(sz),expiration_time=exp,refresh_token=refresh_token)
         for scope in scopes:
             t.scopes.add(scope)
         return t
@@ -81,10 +82,10 @@ class Client(models.Model):
     
     def redirect(self,qs):
         o = urlparse(self.redirection_uri,'https',False)
-        if o.has_key('query'):
+        if o.query:
             qs.update(parse_qs(o.query))
-        o.query = qs
-        return HttpResponseRedirect(o.geturl())
+        url = urlunparse((o[0],o[1],o[2],o[3],urlencode(qs),''))
+        return HttpResponseRedirect(url)
     
 def _generate_client(sender, **kwargs):
     client = kwargs['instance']
@@ -114,7 +115,7 @@ class Token(models.Model):
         return "token for %s from %s [%s]" % (self.owner.__unicode__(),self.client.__unicode__(),self.scope())
     
     def scope(self):
-        return ' '.join([scope.name for scope in self.scopes])
+        return ' '.join([scope.name for scope in self.scopes.all()])
     
     def is_valid(self): # We're checdking lastupdated since that is when the code is authorized
         return not self.used and self.expiration_time >= datetime.datetime.now()
