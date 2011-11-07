@@ -120,7 +120,7 @@ class Token(models.Model):
         return ' '.join([scope.name for scope in self.scopes.all()])
     
     def is_valid(self): # We're checdking lastupdated since that is when the code is authorized
-        return not self.used and self.expiration_time >= datetime.datetime.now()
+        return self.expiration_time >= datetime.datetime.now()
     
     def type(self):
         return self.refresh_token and 'access_token' or 'refresh_token'
