@@ -51,6 +51,8 @@ class Client(models.Model):
     owner = ForeignKey(User,editable=False)
     redirection_uri = URLField(verify_exists=False)
     logo = ImageField(upload_to="clients",blank=True,null=True)
+    name = CharField(max_length=255)
+    description = TextField()
     
     timecreated = models.DateTimeField(auto_now_add=True)
     lastupdated = models.DateTimeField(auto_now=True)
@@ -140,7 +142,7 @@ def _generate_token(sender, **kwargs):
 pre_save.connect(_generate_token,sender=Token)
     
 class Code(models.Model):
-    token = ForeignKey(Token)
+    token = ForeignKey(Token,editable=False)
     used = BooleanField(default=False,editable=False)
     authorized = BooleanField(default=False)
     state = CharField(max_length=255,editable=False,blank=True,null=True)
@@ -166,6 +168,6 @@ def code_by_token(token_value):
     if token_value == None:
         return None
     try:
-        return Code.objects.get(token_value=token_value)
+        return Code.objects.get(token__value=token_value)
     except Code.DoesNotExist:
         return None
