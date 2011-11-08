@@ -10,8 +10,7 @@ from django.utils import simplejson
 from django_oauth2_lite.decorators import clientauth_required
 from django.views.generic.list_detail import object_list
 from django.contrib.auth.decorators import login_required
-from django.views.generic.create_update import create_object
-import logging
+
 
 def _get(request,key,dflt=None):
     if request.GET.has_key(key):
@@ -24,6 +23,13 @@ def _post(request,key,dflt=None):
         return request.POST[key]
     else:
         return dflt
+
+def response_dict(request,d):
+    if request.user.is_authenticated():
+        d['user'] = request.user
+        if request.user and hasattr(request.user,'get_profile'):
+            d['profile'] = request.user.get_profile()
+    return d
 
 @login_required
 def do_authorize(request,state,template_name):
@@ -42,7 +48,7 @@ def do_authorize(request,state,template_name):
     form = CodeForm(instance=code)
     form.fields['code'].initial = code.token.value
 
-    return render_to_response(template_name,{"form": form, 'client': code.token.client, 'scopes': code.token.scopes})
+    return render_to_response(template_name,response_dict(request,{"form": form, 'client': code.token.client, 'scopes': code.token.scopes}))
 
 def authorize(request,template_name='django_oauth2_lite/authorize.html'):
     state = None
@@ -126,7 +132,7 @@ def add_client(request,template_name="django_oauth2_lite/client_form.html"):
     else:
         form = ClientForm()
         
-    return render_to_response(template_name,{'form': form})
+    return render_to_response(template_name,response_dict(request,{'form': form}))
     
 @login_required
 def remove_client(request,id):
@@ -137,9 +143,9 @@ def remove_client(request,id):
 # Manage scopes in the admin view
 
 def callback(request,template_name="django_oauth2_lite/callback.html"):
-    return render_to_response(template_name,{'error': _get(request,'error'),
-                                             'state': _get(request,'state'),
-                                             'code': _get(request,'code')})
+    return render_to_response(template_name,response_dict(request,{'error': _get(request,'error'),
+                                                                   'state': _get(request,'state'),
+                                                                   'code': _get(request,'code')}))
         
 @login_required
 def scopes(request,template_name='django_oauth2_lite/scopes.html'):

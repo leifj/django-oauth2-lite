@@ -1,11 +1,31 @@
 {% extends "django_oauth2_lite/base.html" %}
 {% block title %}Clients{% endblock %}
 {% block body %}
-<h1>Registered OAuth2 Clients</h1>
-<ul>
+<h1>Applications</h1>
+<div class="oauth2-clients">
 {% for client in client_list %}
-<li>{{client.client_id}} - {{client.client_secret}} <a href="client/{{client.id}}/remove">Remove</a>&nbsp;<a href="authorize?state=xxx&client_id={{client.client_id}}&scope=http://localhost/scope/test">Test</a></li>
+   <div class="oauth2-client">
+      <h3 class="listheader oauth2-client-name">{{client.name}}</h3>
+      <div>
+      	<dl>
+      		<dt>client_id</dt>
+      		<dd>{{client.client_id}}</dd>
+      		<dt>client_secret</dt>
+      		<dd>{{client_secret}}</dd>
+      	</dl>
+      	{% if client.description %}
+      	<p>{{client.description}}</p>
+      	{% endif %}
+      	<ul class="buttons">
+      		<li class="button"><a href="client/{{client.id}}/remove">Remove</a></li>
+      		<li class="button"><a href="authorize?state=xxx&client_id={{client.client_id}}&scope=http://localhost/scope/test">Test</a></li>
+      	</ul>
+      </div>
+  </div>
 {% endfor %}
+</div>
+<ul class="buttons">
+	<li class="button"><a href="client/add">Add Client</a></li>
+	<li class="button"><a href="scopes">Application Scopes</a></li>
 </ul>
-<a href="client/add">Add Client</a>&nbsp;<a href="scopes">Scopes</a>
 {% endblock %}
