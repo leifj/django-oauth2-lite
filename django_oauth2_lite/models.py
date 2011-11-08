@@ -124,7 +124,7 @@ class Token(models.Model):
         return self.refresh_token and 'access_token' or 'refresh_token'
     
     def has_scope(self,scope_name):
-        for s in self.scopes:
+        for s in self.scopes.all():
             if scope_name == s.name:
                 return True
         return False
