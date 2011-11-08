@@ -6,6 +6,6 @@
 			"name": "http://localhost/scope/test",
 			"description": "A scope only used for testing"	
 		}
-	},
+	}
 	
 ]
