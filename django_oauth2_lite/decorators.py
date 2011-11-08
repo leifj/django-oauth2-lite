@@ -57,6 +57,7 @@ def oauth2_required(scope=None):
                         return HttpResponseForbidden()
                     
                     request.user = token.owner
+                    request.client = token.client
                     return func(*args,**kwargs)
                 
             return HttpResponseForbidden()
