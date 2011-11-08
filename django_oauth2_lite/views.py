@@ -44,7 +44,6 @@ def do_authorize(request,state,template_name):
 
     return render_to_response(template_name,{"form": form, 'client': code.token.client, 'scopes': code.token.scopes})
 
-@clientauth_required
 def authorize(request,template_name='django_oauth2_lite/authorize.html'):
     state = None
     if request.REQUEST.has_key('state'):
