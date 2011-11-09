@@ -1,7 +1,7 @@
 {% extends "django_oauth2_lite/base.html" %}
 {% block title %}Clients{% endblock %}
 {% block body %}
-<h1>Applications</h1>
+<h1>OAuth2 Clients</h1>
 <div class="oauth2-clients">
 {% for client in client_list %}
    <div class="oauth2-client">
@@ -11,7 +11,7 @@
       		<dt>client_id</dt>
       		<dd>{{client.client_id}}</dd>
       		<dt>client_secret</dt>
-      		<dd>{{client_secret}}</dd>
+      		<dd>{{client.client_secret}}</dd>
       	</dl>
       	{% if client.description %}
       	<p>{{client.description}}</p>
@@ -22,6 +22,8 @@
       	</ul>
       </div>
   </div>
+{% empty %}
+<p>You have no registered OAuth2 clients right now...</p>
 {% endfor %}
 </div>
 <ul class="buttons">

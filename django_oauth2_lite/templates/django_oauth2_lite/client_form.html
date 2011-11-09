@@ -1,9 +1,28 @@
 {% extends "django_oauth2_lite/base.html" %}
-{% block title %}Add Client{% endblock %}
+{% block title %}Add OAuth2 Client{% endblock %}
 {% block body %}
-<h1>Add Client</h1>
-<form method="POST">{% csrf_token %}
-{{form.as_p}}
-<input type="submit" value="Add Client"/>
+
+{% block beforeform %}{% endblock %}
+<form class="oauth2-client-form" method="POST">
+    <h1>Add Client</h1>
+	<table>
+      {% for field in form %}
+        <tr>
+          <td>
+	          {% if not field.is_hidden %}
+	          <div>{{ field.label_tag }}</div>
+	          {% endif %}
+	          {% if field.errors %}
+	          <div>{{ field.errors }}</div>
+	          {% endif %}
+	          <div>{{ field }}</div>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <ul class="buttons">
+      <li class="button left"><input type="submit" value="Add Client" /></li>
+      <li class="button right"><a href="../clients">Cancel</a></li>
+    </ul>
 </form>
 {% endblock %}
