@@ -2,7 +2,7 @@
 
 from django.shortcuts import render_to_response, get_object_or_404 
 from django_oauth2_lite.models import Client, scope_by_name, code_by_token, token_by_value,\
-    Scope
+    Scope, Token
 from django_oauth2_lite.forms import CodeForm, ClientForm
 from django.http import HttpResponseBadRequest, HttpResponse,\
     HttpResponseRedirect
@@ -122,6 +122,14 @@ def clients(request,template_name='django_oauth2_lite/clients.html'):
                        template_name=template_name)
 
 @login_required
+def tokens(request,template_name='django_oauth2_lite/tokens.html'):
+    queryset = Token.objects.filter(owner=request.user,refresh_token=None)
+    return object_list(request,
+                       template_object_name='token',
+                       queryset=queryset, 
+                       template_name=template_name)
+
+@login_required
 def add_client(request,template_name="django_oauth2_lite/client_form.html"):
     if request.method == 'POST':
         client = Client(owner=request.user)
@@ -137,8 +145,18 @@ def add_client(request,template_name="django_oauth2_lite/client_form.html"):
 @login_required
 def remove_client(request,id):
     client = get_object_or_404(Client,id=id)
-    client.delete()
+    if client:
+        client.delete()
     return HttpResponseRedirect("../../clients")
+
+@login_required
+def remove_token(request,id):
+    token = get_object_or_404(Token,id=id)
+    if token:
+        token.delete()
+    return HttpResponseRedirect("../../tokens")
+
+
 
 # Manage scopes in the admin view
 

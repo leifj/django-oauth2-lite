@@ -1,0 +1,24 @@
+{% extends "django_oauth2_lite/base.html" %}
+{% block title %}Tokens{% endblock %}
+{% block body %}
+<h1>Application</h1>
+<div class="oauth2-tokens">
+{% for token in token_list %}
+   <div class="oauth2-token">
+      <h3 class="listheader oauth2-client-name">{{token.client.name}}</h3>
+      <div>
+        <ul>
+      	{% for scope in token.scopes.all %}
+      		<li>{{scope.name}}</li>
+      	{% endfor %}
+      	</ul>
+      	<ul class="buttons">
+      		<li class="button"><a href="token/{{token.id}}/remove">Revoke</a></li>
+      	</ul>
+      </div>
+  </div>
+{% empty %}
+<p>You have no connected applications</p>
+{% endfor %}
+</div>
+{% endblock %}
