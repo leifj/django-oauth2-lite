@@ -21,9 +21,10 @@ Test
 1. Visit /oauth2/clients and create a new client with redirect_uri https://your.host:port/oauth2/example/cb
 2. Click the "Test" button and follow the flow. The resulting code is an access grant token.
 
-Protect resources
+Protect resources::
 
    from django_oauth2_lite.decorators import oauth2_required
+
    @oauth2_required(scope='my-scope')
    def view(request,...):
       #request.user contains the owner of the token
