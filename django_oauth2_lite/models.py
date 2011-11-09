@@ -142,7 +142,7 @@ pre_save.connect(_generate_token,sender=Token)
 class Code(models.Model):
     token = ForeignKey(Token,editable=False)
     used = BooleanField(default=False,editable=False)
-    authorized = BooleanField(default=False)
+    authorized = BooleanField(verbose_name="Allow",default=False)
     state = CharField(max_length=255,editable=False,blank=True,null=True)
     
     def __unicode__(self):

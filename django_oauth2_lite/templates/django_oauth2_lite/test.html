@@ -1,0 +1,18 @@
+{% extends "django_oauth2_lite/base.html" %}
+{% block title %}Test OAuth2 Client{% endblock %}
+{% block body %}
+<h1>Test OAuth2 Client {{client.name}}</h1>
+
+<form method="GET" action="../../authorize">
+<input type="hidden" name="state" valuee="xxx"/>
+<input type="hidden" name="client_id" value="{{client.client_id}}"/>
+<select name="scope">
+{% for scope in scopes %}
+  <option value="{{scope.name}}">{{scope.name}}</option>
+{% endfor %}
+</select>
+<ul class="buttons">
+	<li class="button"><input type="submit" value="Request Authorization"/></li>
+</ul>
+</form>
+{% endblock %}

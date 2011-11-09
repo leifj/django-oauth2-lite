@@ -167,13 +167,16 @@ def remove_token(request,id):
     return HttpResponseRedirect("../../tokens")
 
 
-
 # Manage scopes in the admin view
 
 def callback(request,template_name="django_oauth2_lite/callback.html"):
     return render_to_response(template_name,response_dict(request,{'error': _get(request,'error'),
                                                                    'state': _get(request,'state'),
                                                                    'code': _get(request,'code')}))
+@login_required  
+def test_client(request,id,template_name='django_oauth2_lite/test.html'):
+    client = get_object_or_404(Client,id=id)
+    return render_to_response(template_name,response_dict(request,{'client': client,'scopes': Scope.objects.all()}))
         
 @login_required
 def scopes(request,template_name='django_oauth2_lite/scopes.html'):

@@ -2,26 +2,25 @@
 {% block title %}Authorization{% endblock %}
 {% block body %}
 <h1>Application Authorization Request</h1>
-<p>An application ({{client.name}}) wants access to your information on this service</p>
+<p>An external application wants access to your information on this service</p>
+
 <div>
-	<span style="vertical-align: top; float: left; display: inline; width: 50%;">
-		{% for scope in scopes.all %}
-		<h2>Permissions</h2>
-		<ul>
-		   <li title="{{scope.description}}">{{scope.name}}</li>
-		</ul>
-		{% endfor %}
-	</span>
-	<span style="vertical-align: top;">
+    <div class="left">
 		<h2>{{client.name}}</h2>
 		<p>{{client.description}}</p>
-	</span>
+	</div>
+	<div class="right">
+		{% for scope in scopes.all %}
+		<h3>{{scope.name}}</h3>
+		<p>{{scope.description}}</p>
+		{% endfor %}
+	</div>
 </div>
 <div style="clear: both;"></div>
 <div>
 	<form method="POST">{% csrf_token %}
 	{{form.as_p}}
-	<input type="submit" value="Accept"/>
+	<input type="submit" value="Submit"/>
 	</form>
 </div>
 {% endblock %}
