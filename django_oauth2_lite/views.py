@@ -95,13 +95,23 @@ def token(request):
     at = None
     if grant_type == 'authorization_code':
         code = code_by_token(_post(request,'code'))
-        if not code or not code.is_valid():
+        if not code:
+            return token_error('invalid_grant')
+        if not code.is_valid():
+            if code.token:
+                if code.token.refresh_token:
+                    code.token.refresh_token.delete()
+                code.token.delete()
+            code.delete()
             return token_error('invalid_grant')
         
         at = code.new_access_token()
     elif grant_type == 'refresh_token':
         rt = token_by_value(_post(request,'refresh_token'))
-        if not rt or not rt.is_valid():
+        if not rt:
+            return token_error('invalid_grant')
+        if not rt.is_valid():
+            rt.delete()
             return token_error('invalid_grant')
         ## TODO: scope is silently ignored right now - should honor request to narrow scope
         at = rt.client.new_access_token(refresh_token=rt)

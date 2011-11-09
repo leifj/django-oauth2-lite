@@ -51,7 +51,10 @@ def oauth2_required(scope=None):
                 if parts[0] == 'Bearer':
                     token = token_by_value(parts[1])
                     
-                    if not token or not token.is_valid():
+                    if not token:
+                        return HttpResponseForbidden()
+                    if not token.is_valid():
+                        token.delete()
                         return HttpResponseForbidden()
                     if scope and not token.has_scope(scope):
                         return HttpResponseForbidden()
