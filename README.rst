@@ -23,7 +23,8 @@ Test
 
 Protect resources
 
-@oauth2_required(scope='my-scope')
-def view(request,...):
-   #request.user contains the owner of the token
-   pass
+   from django_oauth2_lite.decorators import oauth2_required
+   @oauth2_required(scope='my-scope')
+   def view(request,...):
+      #request.user contains the owner of the token
+      pass
