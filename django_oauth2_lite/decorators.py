@@ -5,7 +5,8 @@ Created on Nov 1, 2011
 '''
 import functools
 from django_oauth2_lite.models import client_by_id, token_by_value
-from django.http import HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpResponseForbidden, HttpResponseNotAllowed,\
+    HttpResponseBadRequest
 
 try:
     from functools import wraps
@@ -52,17 +53,17 @@ def oauth2_required(scope=None):
                     token = token_by_value(parts[1])
                     
                     if not token:
-                        return HttpResponseForbidden()
+                        return HttpResponseForbidden("No token")
                     if not token.is_valid():
                         token.delete()
-                        return HttpResponseForbidden()
+                        return HttpResponseForbidden("Token expired")
                     if scope and not token.has_scope(scope):
-                        return HttpResponseForbidden()
+                        return HttpResponseForbidden("Token out of scope")
                     
                     request.user = token.owner
                     request.client = token.client
                     return func(*args,**kwargs)
                 
-            return HttpResponseForbidden()
+            return HttpResponseBadRequest("No authorization")
         return wrapper
     return wrap
