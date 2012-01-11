@@ -24,20 +24,20 @@ def clientauth_required(func):
             parts = ah.split(' ')
             if parts[0] == 'Basic':
                 client_id,sep,client_secret = parts[1].decode('base64') 
-        elif request.GET.has_key('client_id'):
-            client_id = request.GET['client_id']
-            if request.GET.has_key('client_secret'):
-                client_secret = request.GET['client_secret']
-            else:
-                return HttpResponseForbidden()
-        else:
+
+        if request.REQUEST.has_key('client_id'):
+            client_id = request.REQUEST['client_id']
+            if request.REQUEST.has_key('client_secret'):
+                client_secret = request.REQUEST['client_secret']
+
+        if not client_id:
             return func(*args,**kwargs)
         
         client = client_by_id(client_id)
         if client == None:
-            return HttpResponseForbidden()
+            return HttpResponseForbidden("no client")
         if client.client_secret != client_secret:
-            return HttpResponseForbidden()
+            return HttpResponseForbidden("bad secret")
         
         return func(*args,**kwargs)
     return wrapper
