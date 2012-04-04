@@ -53,7 +53,6 @@ class Client(models.Model):
     logo = ImageField(upload_to="clients",blank=True,null=True)
     name = CharField(max_length=255)
     description = TextField()
-    
     timecreated = models.DateTimeField(auto_now_add=True)
     lastupdated = models.DateTimeField(auto_now=True)
 
@@ -118,6 +117,8 @@ class Token(models.Model):
         return ' '.join([scope.name for scope in self.scopes.all()])
     
     def is_valid(self): # We're checdking lastupdated since that is when the code is authorized
+        if not self.expiration_time:
+            return True
         return self.expiration_time >= datetime.datetime.now()
     
     def type(self):

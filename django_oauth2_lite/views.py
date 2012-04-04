@@ -114,7 +114,7 @@ def token(request):
             rt.delete()
             return token_error('invalid_grant')
         ## TODO: scope is silently ignored right now - should honor request to narrow scope
-        at = rt.client.new_access_token(refresh_token=rt)
+        at = rt.client.new_access_token(rt.owner, refresh_token=rt)
     else:
         return token_error('unsupported_grant_type')
     
